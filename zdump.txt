@@ -1,0 +1,43 @@
+import Content from "./layout/Content";
+import Sidebar from "./layout/Sidebar";
+import { NotesProvider } from "./context";
+import { useState } from "react";
+
+function App(): JSX.Element {
+  const [isNewWindow, setIsNewWindow] = useState(false);
+
+  window.electron.ipcRenderer.on("allWindows", (_, allWindows) => {
+    if (allWindows !== 1) {
+      setIsNewWindow(true);
+    }
+  });
+
+  if (isNewWindow) {
+    return <Content isNewWindow />;
+  }
+
+  return (
+    <NotesProvider>
+      <div className="h-full flex  border-opacity-30">
+        <Sidebar className="w-1/4 " />
+        <Content isNewWindow={false} />
+      </div>
+    </NotesProvider>
+  );
+}
+
+export default App;
+
+let selectedNote: Note | null = null;
+
+if (props.isNewWindow && state.newWindowNote) {
+  selectedNote = state.newWindowNote;
+  setState((prev) => ({
+    ...prev,
+    newWindowNote: null
+  }));
+} else {
+  selectedNote =
+    state.notes.find((note) => note.id === state.selectedNoteId) ||
+    ({} as Note);
+}
